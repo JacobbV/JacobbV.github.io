@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Fiado do Cartão: app para controlar quem usa o seu cartão de crédito e quanto cada um deve, fatura por fatura.">
+<title>Fiado do Cartão · Jacó</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: página de apresentação de app — capa com o celular, regra da fatura como "extrato", tour das telas em grade, passo a passo do fork. Mesmas cores do app. */
+:root{
+  --bg:#f5f3f0; --card:#ffffff; --fg:#1c1917; --mut:#6f6862; --line:#e7e3df;
+  --accent:#c2410c; --accent-fg:#ffffff; --soft:#ffedd5; --ok:#15803d; --okbg:#dcfce7; --bad:#b91c1c; --badbg:#fee2e2;
+  --frame:#1c1a19; --shadow:0 2px 6px rgba(60,30,10,.06),0 18px 40px rgba(60,30,10,.10);
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#121110; --card:#1c1a19; --fg:#f0eeec; --mut:#a8a29e; --line:#2e2b29;
+  --accent:#fb923c; --accent-fg:#1c0d02; --soft:#3a2214; --ok:#4ade80; --okbg:#14301f; --bad:#f87171; --badbg:#3a1717;
+  --frame:#000000; --shadow:0 2px 6px rgba(0,0,0,.4),0 18px 40px rgba(0,0,0,.45); color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#121110; --card:#1c1a19; --fg:#f0eeec; --mut:#a8a29e; --line:#2e2b29;
+  --accent:#fb923c; --accent-fg:#1c0d02; --soft:#3a2214; --ok:#4ade80; --okbg:#14301f; --bad:#f87171; --badbg:#3a1717;
+  --frame:#000000; --shadow:0 2px 6px rgba(0,0,0,.4),0 18px 40px rgba(0,0,0,.45); color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+section{padding-block:56px;border-top:1px solid var(--line)}
+h1,h2,h3{font-family:var(--display);line-height:1.1;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.4rem,6vw,4rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(1.6rem,3.6vw,2.3rem);font-weight:800;letter-spacing:-.01em}
+h3{font-size:1.15rem;font-weight:600}
+p{margin:0}
+a{color:var(--accent)}
+.eyebrow{font:600 .78rem/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.lead{font-size:1.15rem;color:var(--mut);max-width:34rem}
+.mut{color:var(--mut)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.92em}
+
+/* topo */
+.top{display:flex;align-items:center;gap:10px;padding-block:18px}
+.logo{width:36px;height:36px;border-radius:10px;background:var(--accent);display:grid;place-items:center;flex:none}
+.logo svg{width:22px}
+.top .volta{font-size:.92rem;color:var(--mut);text-decoration:none;margin-right:6px;padding-right:12px;border-right:1px solid var(--line)}
+.top .volta:hover{color:var(--fg)}
+.top b{font-family:var(--display);font-size:1.1rem}
+.top nav{margin-left:auto;display:flex;gap:16px;font-size:.92rem}
+.top nav a{color:var(--mut);text-decoration:none}
+.top nav a:hover{color:var(--fg)}
+@media (max-width:560px){ .top nav{display:none} }
+
+/* capa */
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;padding-block:24px 64px}
+.hero > div{min-width:0}
+.hero h1 span{color:var(--accent)}
+.hero .lead{margin-top:18px}
+.bul{list-style:none;padding:0;margin:24px 0 0;display:grid;gap:10px}
+.bul li{display:flex;gap:10px;align-items:flex-start}
+.bul li::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:9px;flex:none}
+.ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:12px;font-weight:600;text-decoration:none;border:1px solid transparent}
+.btn.pri{background:var(--accent);color:var(--accent-fg)}
+.btn.sec{border-color:var(--line);color:var(--fg);background:var(--card)}
+.btn:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media (max-width:820px){ .hero{grid-template-columns:1fr;gap:36px} }
+
+/* moldura de celular */
+.phone{width:100%;max-width:300px;margin:0 auto;border-radius:34px;border:7px solid var(--frame);background:var(--frame);box-shadow:var(--shadow);overflow:hidden}
+.phone img{display:block;width:100%;height:auto;aspect-ratio:390/844}
+.hero .phone{max-width:320px;transform:rotate(2deg)}
+@media (prefers-reduced-motion:no-preference){ .hero .phone{transition:transform .4s} .hero .phone:hover{transform:rotate(0)} }
+
+/* regra da fatura */
+.regra{display:grid;grid-template-columns:1fr 1.2fr;gap:40px;align-items:start;margin-top:28px}
+.regra > div{min-width:0}
+.cartao{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+.dias{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.dia{flex:1;min-width:120px;border:1px dashed var(--line);border-radius:12px;padding:10px 12px}
+.dia .k{font-size:.78rem;color:var(--mut);letter-spacing:.06em;text-transform:uppercase}
+.dia .v{font-family:var(--display);font-size:1.5rem;font-weight:800}
+.ext{display:grid;gap:0}
+.ext .l{display:grid;grid-template-columns:auto 1fr auto;gap:10px 14px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.ext .l:first-child{border-top:0}
+.ext .data{font-family:var(--mono);font-size:.85rem;color:var(--mut)}
+.ext .seta{font-size:.9rem;color:var(--mut)}
+.pill{display:inline-block;border-radius:99px;padding:2px 10px;font-size:.82rem;font-weight:600;white-space:nowrap}
+.pill.a{background:var(--okbg);color:var(--ok)}
+.pill.b{background:var(--soft);color:var(--accent)}
+.parcelas{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.parc{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--bg);min-width:96px}
+.parc .k{font-size:.75rem;color:var(--mut)}
+.parc .v{font-family:var(--mono);font-size:.92rem}
+@media (max-width:820px){ .regra{grid-template-columns:1fr} }
+
+/* tour */
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:36px 28px;margin-top:32px}
+.tela{display:flex;flex-direction:column;gap:14px;min-width:0}
+.tela .phone{max-width:260px}
+.tela h3{display:flex;gap:8px;align-items:baseline}
+.tela p{color:var(--mut);font-size:.95rem}
+
+/* passos */
+.passos{list-style:none;padding:0;margin:28px 0 0;display:grid;gap:14px;counter-reset:p}
+.passos li{counter-increment:p;display:grid;grid-template-columns:44px 1fr;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.passos li::before{content:counter(p);width:36px;height:36px;border-radius:10px;background:var(--soft);color:var(--accent);font:800 1.1rem/36px var(--display);text-align:center}
+.passos li > div{min-width:0}
+.passos p{color:var(--mut);font-size:.95rem;margin-top:4px}
+code{font-family:var(--mono);font-size:.86em;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:1px 6px;overflow-wrap:anywhere}
+.aviso{margin-top:18px;background:var(--soft);border-radius:12px;padding:14px 16px;font-size:.95rem}
+
+/* segurança */
+.seg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:28px}
+.seg div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.seg p{color:var(--mut);font-size:.95rem;margin-top:6px}
+
+/* créditos */
+.cred{overflow-x:auto;margin-top:24px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+.cred table{width:100%;border-collapse:collapse;font-size:.92rem;min-width:560px}
+.cred th,.cred td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+.cred tr:last-child td{border-bottom:0}
+.cred th{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);font-weight:600}
+footer{padding-block:32px 48px;border-top:1px solid var(--line);color:var(--mut);font-size:.9rem}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header class="top">
+    <a class="volta" href="../../index.html">‹ Portfólio</a>
+    <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg></div>
+    <b>Fiado do Cartão</b>
+    <nav><a href="#fatura">Como calcula</a><a href="#telas">Telas</a><a href="#seguranca">Segurança</a><a href="#meu">Quero o meu</a></nav>
+  </header>
+
+  <div class="hero">
+    <div>
+      <p class="eyebrow">App web pessoal · v2.1</p>
+      <h1>Quem usou o cartão e <span>quanto falta pagar.</span></h1>
+      <p class="lead">Para quem empresta o cartão de crédito para a família e os amigos. Você lança a compra uma vez e o app divide as parcelas, coloca cada uma na fatura certa e monta a cobrança.</p>
+      <ul class="bul">
+        <li>Parcelas na fatura certa, pelo dia de fechamento e vencimento do cartão</li>
+        <li>Mensagem de cobrança pronta para o WhatsApp, com a chave Pix</li>
+        <li>Mesmos dados no celular e no PC, protegidos pela sua conta Google</li>
+      </ul>
+      <div class="ctas">
+        <a class="btn pri" href="https://jacobbv.github.io/fiado-do-cartao/" target="_blank" rel="noopener">Abrir o app</a>
+        <a class="btn sec" href="https://github.com/JacobbV/fiado-do-cartao" target="_blank" rel="noopener">Código no GitHub</a>
+      </div>
+    </div>
+    <div><div class="phone"><img src="telas/02-resumo.webp" alt="Tela Resumo: aviso de fatura fechada, R$ 493,95 vencendo em 05/11, R$ 49,75 em atraso e lista de quem cobrar" width="390" height="844"></div></div>
+  </div>
+</div>
+
+<section id="fatura"><div class="wrap">
+  <p class="eyebrow">A regra da fatura</p>
+  <h2>A mesma compra pode cair em faturas diferentes</h2>
+  <div class="regra">
+    <div>
+      <p class="lead">O que decide é o dia de fechamento. Comprou antes dele, a compra entra na fatura que está aberta. Comprou no dia ou depois, ela pula para a seguinte. No app, cada fatura leva o nome do mês em que vence.</p>
+      <p class="mut" style="margin-top:14px">No exemplo, o cartão fecha no dia 25 e vence no dia 5. Você informa esses dois dias uma vez, em Ajustes.</p>
+    </div>
+    <div class="cartao">
+      <div class="dias">
+        <div class="dia"><div class="k">Fechamento</div><div class="v">dia 25</div></div>
+        <div class="dia"><div class="k">Vencimento</div><div class="v">dia 5</div></div>
+      </div>
+      <div class="ext">
+        <div class="l"><span class="data">20/10</span><span>Perfume, antes do fechamento</span><span class="pill a">fatura nov</span></div>
+        <div class="l"><span class="data">27/10</span><span>Bolsa, depois do fechamento</span><span class="pill b">fatura dez</span></div>
+      </div>
+      <p class="mut" style="margin-top:14px;font-size:.95rem">E a Bolsa de R$ 150,00 em 3x fica assim:</p>
+      <div class="parcelas">
+        <div class="parc"><div class="k">1/3 · vence 05/12</div><div class="v">R$ 50,00</div></div>
+        <div class="parc"><div class="k">2/3 · vence 05/01</div><div class="v">R$ 50,00</div></div>
+        <div class="parc"><div class="k">3/3 · vence 05/02</div><div class="v">R$ 50,00</div></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section id="telas"><div class="wrap">
+  <p class="eyebrow">Por dentro</p>
+  <h2>As telas do app</h2>
+  <p class="lead" style="margin-top:12px">Prints com dados de exemplo (Lia, Marcos, Tia Célia e Pedro são inventados). O app também tem tema claro, que acompanha o celular.</p>
+  <div class="grade">
+    <article class="tela"><div class="phone"><img src="telas/02-resumo.webp" alt="Tela Resumo" loading="lazy" width="390" height="844"></div>
+      <h3>Resumo</h3><p>Quanto vence na próxima fatura, na seguinte, o que está atrasado e o total a receber. Quando a fatura fecha, aparece um aviso no topo.</p></article>
+    <article class="tela"><div class="phone"><img src="telas/03-faturas.webp" alt="Tela Faturas de novembro, agrupada por pessoa" loading="lazy" width="390" height="844"></div>
+      <h3>Faturas</h3><p>Mês a mês, separado por pessoa. Marque parcela por parcela ou toque em <b>Recebi</b> para dar baixa em tudo de uma vez.</p></article>
+    <article class="tela"><div class="phone"><img src="telas/04-lancar.webp" alt="Tela Lançar mostrando 3x de R$ 50,00 a partir de dez/2026" loading="lazy" width="390" height="844"></div>
+      <h3>Lançar</h3><p>Quem comprou, o quê, o valor e em quantas vezes. Antes de salvar, o app mostra em qual fatura cai a primeira parcela e explica o motivo.</p></article>
+    <article class="tela"><div class="phone"><img src="telas/05-cobrar.webp" alt="Janela de cobrança com a mensagem pronta para o WhatsApp" loading="lazy" width="390" height="844"></div>
+      <h3>Cobrar no WhatsApp</h3><p>A mensagem já sai com cada item, os atrasados, o total e a sua chave Pix. Dá para editar antes de enviar, e o número fica salvo.</p></article>
+    <article class="tela"><div class="phone"><img src="telas/06-pessoas.webp" alt="Tela Pessoas com o saldo de cada um" loading="lazy" width="390" height="844"></div>
+      <h3>Pessoas</h3><p>Quanto cada um deve, até quando vão as parcelas e quanto já pagou. Um Pix avulso dá baixa nas parcelas mais antigas.</p></article>
+    <article class="tela"><div class="phone"><img src="telas/09-extrato.webp" alt="Extrato da Lia por fatura" loading="lazy" width="390" height="844"></div>
+      <h3>Extrato</h3><p>Tudo de uma pessoa, fatura por fatura, com o histórico de pagamentos embaixo.</p></article>
+    <article class="tela"><div class="phone"><img src="telas/07-relatorio.webp" alt="Tela Relatório com ranking do ano" loading="lazy" width="390" height="844"></div>
+      <h3>Relatório</h3><p>Total do ano, média por fatura, quem mais usou o cartão e uma tabela de pessoa por mês.</p></article>
+    <article class="tela"><div class="phone"><img src="telas/10-sobre.webp" alt="Tela Sobre com autor e créditos" loading="lazy" width="390" height="844"></div>
+      <h3>Sobre</h3><p>Versão, autor, como funciona, privacidade, créditos com licenças e histórico de versões.</p></article>
+    <article class="tela"><div class="phone"><img src="telas/01-login.webp" alt="Tela de login com o botão Entrar com Google" loading="lazy" width="390" height="844"></div>
+      <h3>Entrar com Google</h3><p>Sem senha nova para decorar. Funciona como app no celular: dá para instalar com ícone próprio e abrir em tela cheia.</p></article>
+  </div>
+</div></section>
+
+<section id="seguranca"><div class="wrap">
+  <p class="eyebrow">Segurança</p>
+  <h2>Os dados são só seus</h2>
+  <div class="seg">
+    <div><h3>Uma conta, um dono</h3><p>As regras do banco só deixam uma conta Google ler e gravar. Qualquer outra pessoa que fizer login é bloqueada.</p></div>
+    <div><h3>Nada de cartão</h3><p>O app não pede número de cartão, senha nem dado bancário. Só guarda quem comprou, o quê e quanto.</p></div>
+    <div><h3>Chave travada no site</h3><p>A chave do Firebase só é aceita quando a chamada vem do endereço do próprio app.</p></div>
+    <div><h3>Backup na mão</h3><p>Em Ajustes dá para baixar um backup e restaurar depois, caso algo seja apagado por engano.</p></div>
+  </div>
+</div></section>
+
+<section id="meu"><div class="wrap">
+  <p class="eyebrow">Quero o meu</p>
+  <h2>Como montar o seu Fiado do Cartão</h2>
+  <p class="lead" style="margin-top:12px">Cada pessoa tem a própria cópia, com o próprio banco de dados. Leva uns 20 minutos e é tudo gratuito. Você precisa de uma conta no GitHub e de uma conta Google.</p>
+  <ol class="passos">
+    <li><div><h3>Faça um fork do repositório</h3><p>Abra <code>github.com/JacobbV/fiado-do-cartao</code> e clique em <b>Fork</b>. Isso cria uma cópia na sua conta. (A <b>Star</b> é só um favorito e não copia nada.)</p></div></li>
+    <li><div><h3>Ligue o GitHub Pages</h3><p>No seu repositório: <b>Settings → Pages → Deploy from a branch → <code>main</code> / <code>(root)</code> → Save</b>. O app fica em <code>seu-usuario.github.io/fiado-do-cartao</code>.</p></div></li>
+    <li><div><h3>Crie o seu projeto no Firebase</h3><p>Em <code>console.firebase.google.com</code>: crie o projeto, registre um app Web, ative o login com <b>Google</b> em Authentication, coloque <code>seu-usuario.github.io</code> nos domínios autorizados e crie o <b>Firestore</b> no modo de produção.</p></div></li>
+    <li><div><h3>Troque a configuração</h3><p>No GitHub, edite o <code>firebase-config.js</code> pelo lápis e cole os dados do <b>seu</b> projeto. O que vem no fork aponta para o projeto do Jacó e não vai funcionar para você.</p></div></li>
+    <li><div><h3>Publique as regras e libere o seu acesso</h3><p>Cole o <code>firestore.rules</code> na aba Regras do Firestore e publique. Abra o app, entre com o Google e copie o UID que aparecer. Troque o UID que está no arquivo pelo seu, publique de novo e recarregue.</p></div></li>
+    <li><div><h3>Configure e use</h3><p>Em Ajustes, informe o dia de fechamento e o de vencimento do seu cartão e a sua chave Pix. No celular, use <b>Instalar app</b> no menu do Chrome.</p></div></li>
+  </ol>
+  <p class="aviso">O passo a passo completo, com cada clique, está no <a href="https://github.com/JacobbV/fiado-do-cartao#readme" target="_blank" rel="noopener">README do repositório</a>.</p>
+</div></section>
+
+<section id="creditos"><div class="wrap">
+  <p class="eyebrow">Créditos</p>
+  <h2>Feito com</h2>
+  <div class="cred"><table>
+    <thead><tr><th>Recurso</th><th>Para quê</th><th>Licença</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://github.com/firebase/firebase-js-sdk" target="_blank" rel="noopener">Firebase JS SDK</a> <span class="num mut">10.14.1</span></td><td>Login e banco de dados</td><td><a href="https://github.com/firebase/firebase-js-sdk/blob/main/LICENSE" target="_blank" rel="noopener">Apache 2.0</a></td></tr>
+      <tr><td><a href="https://firebase.google.com/" target="_blank" rel="noopener">Firebase Auth e Cloud Firestore</a></td><td>Conta e dados na nuvem</td><td><a href="https://firebase.google.com/terms" target="_blank" rel="noopener">Termos do Firebase</a></td></tr>
+      <tr><td><a href="https://www.chartjs.org/" target="_blank" rel="noopener">Chart.js</a> <span class="num mut">4.4.1</span></td><td>Gráficos</td><td><a href="https://github.com/chartjs/Chart.js/blob/master/LICENSE.md" target="_blank" rel="noopener">MIT</a></td></tr>
+      <tr><td>Link <code>wa.me</code> do WhatsApp</td><td>Abrir a conversa de cobrança</td><td><a href="https://www.whatsapp.com/legal/terms-of-service" target="_blank" rel="noopener">Termos do WhatsApp</a></td></tr>
+      <tr><td><a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a></td><td>Hospedagem</td><td><a href="https://docs.github.com/pt/site-policy/github-terms/github-terms-of-service" target="_blank" rel="noopener">Termos do GitHub</a></td></tr>
+      <tr><td><a href="https://fonts.google.com/" target="_blank" rel="noopener">Google Fonts</a> (Bricolage Grotesque, Figtree, JetBrains Mono)</td><td>Tipografia desta página</td><td><a href="https://openfontlicense.org/" target="_blank" rel="noopener">SIL Open Font License 1.1</a></td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<div class="wrap"><footer>
+  <p style="margin-bottom:10px"><a href="../../index.html">‹ Voltar para o portfólio</a></p>
+  Fiado do Cartão é um projeto pessoal de <b>Rameson Jacó</b> (<a href="https://github.com/JacobbV" target="_blank" rel="noopener">@JacobbV</a>), de Catolé do Rocha, PB. WhatsApp, Google e Firebase são marcas dos seus donos e aparecem aqui só para identificar os serviços usados.
+</footer></div>
+
+</body>
+</html>
