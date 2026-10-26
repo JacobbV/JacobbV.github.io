@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Controle de Estoque · Jacó</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Estoque e pedidos de compra para restaurante, lanchonete, cafeteria ou açaiteria, com níveis de acesso.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+:root{--bg:#faf2e6;--card:#fcf9f2;--fg:#3a2a1c;--head:#1f3322;--mut:#7a6650;--line:#e6dac2;--accent:#b5472f;--accent-fg:#ffffff;--verde:#1f3322;
+  --shadow:0 12px 34px rgba(60,40,20,.16);--r:14px;--display:"Playfair Display",Georgia,serif;--body:"Plus Jakarta Sans",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1a1410;--card:#241c16;--fg:#efe4d3;--head:#f3e7d2;--mut:#b8a68c;--line:#3a2e24;--accent:#e0795c;--accent-fg:#1a1410;--verde:#9cc48a;--shadow:0 12px 34px rgba(0,0,0,.5);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1a1410;--card:#241c16;--fg:#efe4d3;--head:#f3e7d2;--mut:#b8a68c;--line:#3a2e24;--accent:#e0795c;--accent-fg:#1a1410;--verde:#9cc48a;--shadow:0 12px 34px rgba(0,0,0,.5);color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+section{padding-block:56px;border-top:1px solid var(--line)}
+h1,h2,h3{font-family:var(--display);line-height:1.08;text-wrap:balance;margin:0;color:var(--head)}
+h2{font-size:clamp(1.7rem,3.8vw,2.5rem)}
+h3{font-size:1.15rem}
+p{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.eyebrow{font:600 .76rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.lead{font-size:1.12rem;color:var(--mut);max-width:36rem}
+.top{display:flex;align-items:center;gap:12px;padding-block:18px;flex-wrap:wrap}
+.top .volta{font-size:.92rem;color:var(--mut);text-decoration:none;padding-right:12px;border-right:1px solid var(--line)}
+.top .volta:hover{color:var(--fg)}
+.top b{font-family:var(--display);font-size:1.15rem;color:var(--head)}
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;padding-block:24px 64px}
+.hero > div{min-width:0}
+.hero h1{font-size:clamp(2.4rem,6.4vw,4.2rem)}
+.hero .lead{margin-top:18px}
+.bul{list-style:none;padding:0;margin:24px 0 0;display:grid;gap:10px}
+.bul li{display:flex;gap:10px;align-items:flex-start}
+.bul li::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--accent);margin-top:9px;flex:none}
+.ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:var(--r);font-weight:600;text-decoration:none;border:1px solid transparent}
+.btn.pri{background:var(--accent);color:var(--accent-fg)}
+.btn.sec{border-color:var(--line);color:var(--fg);background:var(--card)}
+.nota{font-size:.9rem;color:var(--mut);margin-top:14px}
+@media (max-width:820px){ .hero{grid-template-columns:1fr;gap:36px} }
+.phone{width:100%;max-width:300px;margin:0 auto;border-radius:34px;border:7px solid #000;background:#000;box-shadow:var(--shadow);overflow:hidden}
+.phone img{display:block;width:100%;height:auto;aspect-ratio:390/844}
+.hero .phone{max-width:320px;transform:rotate(2deg)}
+@media (prefers-reduced-motion:no-preference){ .hero .phone{transition:transform .4s} .hero .phone:hover{transform:rotate(0)} }
+.numeros{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:28px}
+.numeros div{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.numeros b{display:block;font:800 2.2rem/1 var(--display);color:var(--head)}
+.numeros span{color:var(--mut);font-size:.95rem}
+.fluxo{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:24px}
+.fluxo span{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:8px 14px;font-weight:600;font-size:.95rem}
+.fluxo i{color:var(--mut);font-style:normal}
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:36px 28px;margin-top:32px}
+.tela{display:flex;flex-direction:column;gap:14px;min-width:0}
+.tela .phone{max-width:260px}
+.tela p{color:var(--mut);font-size:.95rem}
+.recursos{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:28px}
+.recursos div{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.recursos p{color:var(--mut);font-size:.95rem;margin-top:6px}
+.cred{overflow-x:auto;margin-top:24px;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
+.cred table{width:100%;border-collapse:collapse;font-size:.92rem;min-width:560px}
+.cred th,.cred td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+.cred tr:last-child td{border-bottom:0}
+.cred th{font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);font-weight:600}
+footer{padding-block:32px 48px;border-top:1px solid var(--line);color:var(--mut);font-size:.9rem;display:grid;gap:10px}
+
+.fluxo span:nth-child(odd){border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
+.papeis{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:28px}
+.papeis div{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.papeis b{font:700 1.2rem/1.2 var(--display);color:var(--head)}
+.papeis ul{margin:10px 0 0;padding-left:18px;color:var(--mut);font-size:.95rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top"><a class="volta" href="../../index.html">‹ Portfólio</a><b>Controle de Estoque</b></header>
+  <div class="hero">
+    <div>
+      <p class="eyebrow">PWA para food service · v2.1</p>
+      <h1 style="margin-top:14px">Do pedido da cozinha ao estoque conferido</h1>
+      <p class="lead">Estoque e pedidos de compra para restaurante, lanchonete, cafeteria ou açaiteria. A equipe pede o que está faltando, quem administra aprova, compra e confere o que chegou. Nasceu para um restaurante de verdade e está em uso todos os dias.</p>
+      <ul class="bul"><li>Equipe pede sem digitar nome livre, escolhendo da lista padronizada do estoque</li><li>Conferência no recebimento: pediu 30, vieram 20, o estoque soma 20</li><li>Login com níveis de acesso e balanço de estoque por etapas</li></ul>
+      <div class="ctas"></div>
+      <p class="nota">Sistema de uso interno, sem demonstração pública. Os prints usam um restaurante e uma equipe fictícios.</p>
+    </div>
+    <div><div class="phone"><img src="telas/02-inicio.webp" alt="Tela inicial com resumo do estoque e itens que precisam de atenção" width="390" height="844"></div></div>
+  </div>
+</div>
+<section><div class="wrap">
+  <p class="eyebrow">Como funciona</p>
+  <h2 style="margin-top:12px">Um pedido, do começo ao fim</h2>
+  <p class="lead" style="margin-top:12px">Cada pedido passa por estas etapas, e toda movimentação fica registrada com quem fez.</p>
+  <div class="fluxo"><span>Solicitada</span><i>→</i><span>Aprovada</span><i>→</i><span>Comprada</span><i>→</i><span>Recebida</span></div>
+  <div class="papeis">
+    <div><b>Administração</b><ul><li>Vê o estoque e define as quantidades</li><li>Aprova ou recusa pedidos</li><li>Manda a lista de compras pelo WhatsApp</li><li>Cria logins e libera funções aos poucos</li></ul></div>
+    <div><b>Equipe</b><ul><li>Cozinha pede ingredientes, salão pede bebidas e descartáveis</li><li>Pede o item, sem quantidade</li><li>Não vê números do estoque</li><li>Pode receber e contar, se liberado</li></ul></div>
+    <div><b>Quem chega agora</b><ul><li>Começa só com a função de pedir</li><li>Troca a senha provisória no primeiro acesso</li><li>Ganha novas funções quando a administração liberar</li></ul></div>
+  </div>
+</div></section>
+<section><div class="wrap">
+  <p class="eyebrow">Por dentro</p>
+  <h2 style="margin-top:12px">As telas do app</h2>
+  <p class="lead" style="margin-top:12px">Os prints usam o "Seu Restaurante", um nome de exemplo. O visual e o logo se adaptam à casa que usa o app.</p>
+  <div class="grade">
+    <article class="tela"><div class="phone"><img src="telas/02-inicio.webp" alt="Início da administração" loading="lazy" width="390" height="844"></div>
+      <h3>Início</h3><p>Saudação, resumo com itens baixos, pedidos para aprovar e compras a receber, e a lista do que precisa de atenção.</p></article>
+    <article class="tela"><div class="phone"><img src="telas/03-estoque.webp" alt="Lista do estoque com status" loading="lazy" width="390" height="844"></div>
+      <h3>Estoque</h3><p>Busca, filtro por setor e selo de status em cada item: baixo, no limite ou OK.</p></article>
+    <article class="tela"><div class="phone"><img src="telas/04-pedidos.webp" alt="Pedidos para aprovar" loading="lazy" width="390" height="844"></div>
+      <h3>Pedidos</h3><p>O que a equipe pediu, agrupado por pessoa, com sugestões de itens novos e histórico.</p></article>
+    <article class="tela"><div class="phone"><img src="telas/05-compras.webp" alt="Lista de compras" loading="lazy" width="390" height="844"></div>
+      <h3>Compras</h3><p>O que foi aprovado vira lista de compras, que pode ir direto para o fornecedor pelo WhatsApp.</p></article>
+    <article class="tela"><div class="phone"><img src="telas/06-menu.webp" alt="Menu da administração" loading="lazy" width="390" height="844"></div>
+      <h3>Gestão</h3><p>Balanço de estoque, relatórios, equipe e configurações ficam só para quem administra.</p></article>
+    <article class="tela"><div class="phone"><img src="telas/07-equipe.webp" alt="Início de alguém da equipe" loading="lazy" width="390" height="844"></div>
+      <h3>Visão da equipe</h3><p>Quem é da equipe vê só os próprios pedidos e o andamento de cada um.</p></article>
+    <article class="tela"><div class="phone"><img src="telas/01-login.webp" alt="Tela de login" loading="lazy" width="390" height="844"></div>
+      <h3>Entrar</h3><p>Cada pessoa tem o próprio usuário. O login bloqueia depois de 5 tentativas erradas.</p></article></div>
+</div></section>
+<section><div class="wrap">
+  <p class="eyebrow">Por baixo</p>
+  <h2 style="margin-top:12px">Pensado para o dia a dia de uma cozinha</h2>
+  <div class="recursos"><div><h3>Nomes padronizados</h3><p>Nada de "cerveja" e "Cerveja" duplicados: a equipe escolhe da lista, e nomes repetidos são bloqueados.</p></div><div><h3>Balanço por etapas</h3><p>Cozinha, bebidas e descartáveis contados às cegas, com conferência, recontagem e fechamento.</p></div><div><h3>Recebimento parcial</h3><p>O estoque soma só o que chegou, e o histórico registra o que faltou.</p></div><div><h3>Backup em um toque</h3><p>A administração baixa uma cópia do banco quando quiser.</p></div><div><h3>Instala no celular</h3><p>É um PWA: vira ícone na tela inicial e abre como app.</p></div><div><h3>Custo zero</h3><p>Roda no plano gratuito do PythonAnywhere, sem custo para o negócio.</p></div></div>
+</div></section>
+<section><div class="wrap">
+  <p class="eyebrow">Créditos</p>
+  <h2 style="margin-top:12px">Feito com</h2>
+  <div class="cred"><table><thead><tr><th>Recurso</th><th>Para quê</th><th>Licença</th></tr></thead><tbody><tr><td><a href="https://flask.palletsprojects.com" target="_blank" rel="noopener">Flask</a></td><td>Servidor e API</td><td>BSD-3</td></tr><tr><td><a href="https://sqlite.org" target="_blank" rel="noopener">SQLite</a></td><td>Banco de dados</td><td>Domínio público</td></tr><tr><td><a href="https://www.pythonanywhere.com" target="_blank" rel="noopener">PythonAnywhere</a></td><td>Hospedagem</td><td>Termos do PythonAnywhere</td></tr><tr><td><a href="https://fonts.google.com" target="_blank" rel="noopener">Google Fonts</a></td><td>Playfair Display, Plus Jakarta Sans, JetBrains Mono</td><td>SIL OFL 1.1</td></tr></tbody></table></div>
+</div></section>
+<div class="wrap"><footer>
+  <p><a href="../../index.html">‹ Voltar para o portfólio</a></p>
+  <p>Controle de Estoque é um projeto de <b>Rameson Jacó</b> (<a href="https://github.com/JacobbV" target="_blank" rel="noopener">@JacobbV</a>), de Catolé do Rocha, PB. Marcas citadas pertencem aos seus donos e aparecem só para identificar os serviços usados.</p>
+</footer></div>
+</body>
+</html>

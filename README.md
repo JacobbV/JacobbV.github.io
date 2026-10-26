@@ -10,9 +10,10 @@ No ar em **<https://jacobbv.github.io/>**
 JacobbV.github.io/
 ├── index.html                      ← página inicial do portfólio
 ├── projetos/
-│   └── fiado-do-cartao/
-│       ├── index.html              ← apresentação do Fiado do Cartão
-│       └── telas/*.webp            ← prints com dados de exemplo
+│   ├── fiado-do-cartao/            ← apresentação do Fiado do Cartão
+│   ├── expedicao-chapada/          ← apresentação da Expedição Chapada
+│   └── controle-de-estoque/        ← apresentação do Controle de Estoque
+│       (cada uma com index.html e telas/*.webp, prints com dados de exemplo)
 ├── .nojekyll
 └── README.md
 ```
@@ -22,8 +23,8 @@ Os apps continuam nos repositórios deles e aparecem no mesmo domínio:
 | Projeto | Apresentação | App |
 |---|---|---|
 | Fiado do Cartão | `/projetos/fiado-do-cartao/` | `/fiado-do-cartao/` |
-| Expedição Chapada | em breve | `/expedicao-chapada/` |
-| Controle de Estoque para Food Service | em breve | uso interno |
+| Expedição Chapada | `/projetos/expedicao-chapada/` | `/expedicao-chapada/` (com login) |
+| Controle de Estoque para Food Service | `/projetos/controle-de-estoque/` | uso interno |
 | Controle Financeiro | em breve | em repaginação |
 
 ## Como colocar seus contatos
@@ -50,7 +51,7 @@ const CONTATOS = {
 
 | Recurso | Uso | Licença |
 |---|---|---|
-| [Unbounded](https://fonts.google.com/specimen/Unbounded), [Figtree](https://fonts.google.com/specimen/Figtree), [JetBrains Mono](https://fonts.google.com/specimen/JetBrains+Mono), [Bricolage Grotesque](https://fonts.google.com/specimen/Bricolage+Grotesque) | Tipografia, via Google Fonts | [SIL Open Font License 1.1](https://openfontlicense.org/) |
+| Unbounded, Figtree, JetBrains Mono, Bricolage Grotesque, Big Shoulders Display, Public Sans, Playfair Display e Plus Jakarta Sans | Tipografia, via Google Fonts | [SIL Open Font License 1.1](https://openfontlicense.org/) |
 | Ícone do GitHub | Botões de link | [Diretrizes de marca do GitHub](https://github.com/logos) |
 | GitHub Pages | Hospedagem | [Termos do GitHub](https://docs.github.com/pt/site-policy/github-terms/github-terms-of-service) |
 
@@ -60,6 +61,7 @@ Ilustrações dos cards e layout feitos para este site. Os prints usam dados fic
 
 | Versão | Data | Mudanças |
 |---|---|---|
+| v1.1 | 26/10/2026 | Apresentações da Expedição Chapada e do Controle de Estoque |
 | v1.0 | 26/10/2026 | Primeira versão: início, projetos, tecnologias, sobre, contato e apresentação do Fiado do Cartão |
 
 © 2026 Rameson Jacó.
